@@ -73,6 +73,12 @@ def outline_gravestones():
         print d.gravestone.description
 
 
+def outline_character_social_network(person):
+    """Print out a character's relationships to everyone else in the town."""
+    for resident in sim.town.residents:
+        print person.relation_to_me(resident)
+
+
 def outline_relationship(person, other_person):
     """Outline the unidirectional relationships between these two."""
     if other_person not in person.relationships:
