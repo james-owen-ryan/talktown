@@ -6,8 +6,7 @@ class BasicConfig(object):
     # Seed for the psuedorandom number generator; if a given seed is held constant
     # across simulation instances, and if the codebase hasn't changed, the towns
     # generated for the simulation instances will be identical
-    # seed = int(random.random()*9999999)
-    seed = 8
+    seed = int(random.random()*9999999)
     random.seed(seed)
     # Date that town generation starts
     year_worldgen_begins = 1839
