@@ -4,7 +4,7 @@ import datetime
 from business import *
 from config import Config
 from town import *
-from story_recognition import StoryRecognizer
+from drama import StoryRecognizer
 
 
 class Simulation(object):
