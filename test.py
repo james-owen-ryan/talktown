@@ -65,3 +65,9 @@ def outline_character_locations():
                     print "\t{} (working as {})".format(character, character.routine.occasion, character.occupation.vocation)
                 else:
                     print "\t{} ({})".format(character, character.routine.occasion)
+
+
+def outline_gravestones():
+    """Print out all the gravestones in the town."""
+    for d in sim.town.deceased:
+        print d.gravestone.description
