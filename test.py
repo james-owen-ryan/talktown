@@ -71,3 +71,15 @@ def outline_gravestones():
     """Print out all the gravestones in the town."""
     for d in sim.town.deceased:
         print d.gravestone.description
+
+
+def outline_relationship(person, other_person):
+    """Outline the unidirectional relationships between these two."""
+    if other_person not in person.relationships:
+        print None
+    else:
+        print "\t{}'s relationship toward {}:".format(person, other_person)
+        print person.relationships[other_person].outline()
+        print '\n'
+        print "\t{}'s relationship toward {}:".format(other_person, person)
+        print other_person.relationships[person].outline()
