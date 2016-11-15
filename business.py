@@ -304,7 +304,7 @@ class Business(object):
     def __str__(self):
         """Return string representation."""
         if not self.out_of_business:
-            return "{}, {}".format(self.name, self.address)
+            return "{}, {} (founded {})".format(self.name, self.address, self.founded)
         else:
             return "{}, {} ({}-{})".format(self.name, self.address, self.founded, self.closed)
 
