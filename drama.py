@@ -209,11 +209,16 @@ class AsymmetricFriendship(object):
         """Initialize an AsymmetricFriendship object.
 
         @param subjects: A tuple containing the two characters, where subjects[0] considers
-                         subjects[1] to be a friend, and subjects[1] considers subjects[0] to
-                         be an enemy.
+                         subjects[1] to be a friend, and subjects[1] dislikes subjects[0].
         """
         self.subjects = subjects
         self.friend, self.enemy = subjects
+
+    def __str__(self):
+        """Return string representation."""
+        return "An asymmetric friendship: {} considers {} a friend, but {} dislikes {}".format(
+            self.subjects[0].name, self.subjects[1].name, self.subjects[1].name, self.subjects[0].name
+        )
 
 
 class Misanthropy(object):
