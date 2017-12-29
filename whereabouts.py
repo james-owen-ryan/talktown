@@ -81,7 +81,7 @@ class Whereabout(object):
                 self.location.name, self.location.address,
                 self.date[0].lower()+self.date[1:]
             )
-        elif self.occasion == 'errand':
+        elif self.occasion == 'leisure':
             return "Out for leisure at {} ({}) on the {}".format(
                 self.location.name, self.location.address,
                 self.date[0].lower()+self.date[1:]
