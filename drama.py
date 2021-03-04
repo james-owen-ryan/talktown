@@ -12,6 +12,8 @@ class StoryRecognizer(object):
         self.rivalries = []  # Gets set by self._excavate_rivalries()
         self.sibling_rivalries = []  # Gets set by self._excavate_sibling_rivalries()
         self.business_owner_rivalries = []  # Gets set by self._excavate_business_owner_rivalries()
+        self.settlers_living_descendants = []
+        self.rags_to_riches = []
 
     def __str__(self):
         """Return string representation."""
@@ -35,7 +37,12 @@ class StoryRecognizer(object):
         print "\tFound {n} sibling rivalries".format(n=len(self.sibling_rivalries))
         self.business_owner_rivalries = self._excavate_business_owner_rivalries()
         print "\tFound {n} business-owner rivalries".format(n=len(self.business_owner_rivalries))
-
+        self.settlers_living_descendants = self._excavate_living_descendants_of_settlers()
+        print "\tFound {n} settlers with living descendants".format(n=len(self.settlers_living_descendants))
+        self.rags_to_riches = self._excavate_rags_to_riches()
+        print "\tFound {n} settlers who went from rags to riches".format(n=len(self.rags_to_riches))
+        self.riches_to_rags = self._excavate_riches_to_rags()
+        print "\tFound {n} settlers who went from riches to rags".format(n=len(self.riches_to_rags))
     def _excavate_unrequited_love_cases(self):
         """Recognize cases where one character's love for another is not reciprocated."""
         unrequited_love_cases = []
@@ -129,6 +136,46 @@ class StoryRecognizer(object):
                                 business_owner_rivalries.append(BusinessOwnerRivalry(subjects=subjects))
         return business_owner_rivalries
 
+    def _excavate_living_descendants_of_settlers(self):
+        """All living descendants of settlers"""
+        all_living_descendants = []
+        for settler in self.simulation.town.settlers:
+            current_settler_descendants = []
+            for descendant in settler.descendants:
+                if descendant.alive == True:
+                  current_settler_descendants.append(descendant) 
+            if len(current_settler_descendants) != 0:
+              subjects = (settler, current_settler_descendants)
+              all_living_descendants.append(SettlerLivingDescendants(subjects=subjects))
+        return all_living_descendants
+
+    def _excavate_rags_to_riches(self):
+        all_rags_to_riches = []
+        for settler in self.simulation.town.settlers:
+            current_settler_occupation_levels = []
+            for occupation in settler.occupations:
+              current_settler_occupation_levels.append(occupation.level)
+            if len(current_settler_occupation_levels) > 1:
+              first_job = current_settler_occupation_levels[0]
+              last_job = current_settler_occupation_levels[-1]
+              if first_job == 1 and last_job == 5:
+                subjects = (settler, settler.occupations)
+                all_rags_to_riches.append(RagsToRiches(subjects=subjects))
+        return all_rags_to_riches
+
+    def _excavate_riches_to_rags(self):
+        all_riches_to_rags = []
+        for settler in self.simulation.town.settlers:
+            current_settler_occupation_levels = []
+            for occupation in settler.occupations:
+              current_settler_occupation_levels.append(occupation.level)
+            if len(current_settler_occupation_levels) > 1:
+              first_job = current_settler_occupation_levels[0]
+              last_job = current_settler_occupation_levels[-1]
+              if (first_job == 5 or first_job == 4) and (last_job == 1 or last_job == 2):
+                subjects = (settler, settler.occupations)
+                all_riches_to_rags.append(RichesToRags(subjects=subjects))
+        return all_riches_to_rags
 
 class UnrequitedLove(object):
     """A case of one character's love not being reciprocated by a second character."""
@@ -303,3 +350,56 @@ class BusinessOwnerRivalry(object):
                 second_company=self.subjects[1].occupation.company.name
             )
         )
+
+class SettlerLivingDescendants(object):
+  """A case of a living descendant of the town's initial settlers"""
+  def __init__(self, subjects):
+    """Initialize a SettlerLivingDescendants object.
+    
+    @param subjects: The descendants of a settler and the settler themself
+    """
+    self.subjects = subjects
+    self.settler = subjects[0]
+    self.descendants = subjects[1:]
+    
+    def __str__(self):
+      """Return string representation"""
+      return (
+        "The living descendants of the settler {settler}: "
+	"{self.descendants}".format(
+          settler = self.settler,
+          descendants = self.descendants
+        )
+     )
+
+class RagsToRiches(object):
+  """A case of rags to riches, aka first job level 1, last job level 5"""
+  def __init__(self, subjects):
+    self.subjects = subjects
+    self.settler = subjects[0]
+    self.occupations = subjects[1]
+  def __str__(self):
+    """Return string representation"""
+    return (
+      "The occupations of the settler {settler}: "
+      "{occupations}".format(
+        settler = self.settler,
+        occupations = self.occupations
+      )
+   )
+
+class RichesToRags(object):
+  """A case of riches to rags, aka first job level 5, last job level 1"""
+  def __init__(self, subjects):
+    self.subjects = subjects
+    self.settler = subjects[0]
+    self.occupations = subjects[1] 
+  def __str__(self):
+    """Return string representation"""
+    return (
+      "The occupations of the settler {settler}: "
+      "{occupations}".format(
+        settler = self.settler,
+        occupations = self.occupations
+      )
+    )

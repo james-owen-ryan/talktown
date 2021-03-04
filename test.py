@@ -2,7 +2,6 @@ import sys
 import time
 from simulation import Simulation
 
-
 # Generate a town!
 start_time = time.time()
 sim = Simulation()  # Objects of the class Simulation are Talk of the Town simulations
@@ -40,13 +39,14 @@ asymmetric_friendships = sim.story_recognizer.asymmetric_friendships
 misanthropes = sim.story_recognizer.misanthropes
 sibling_rivalries = sim.story_recognizer.sibling_rivalries
 business_owner_rivalries = sim.story_recognizer.business_owner_rivalries
-
+settler_living_descendants = sim.story_recognizer.settlers_living_descendants
+rags_to_riches = sim.story_recognizer.rags_to_riches
+riches_to_rags = sim.story_recognizer.riches_to_rags
 # To simulate ahead in time, simply use the 'Simulation.simulate()' method (given
 # that we binded a Simulation object to the variable 'sim' above, you can call this
 # using sim.simulate()'), which takes the number of timesteps as its argument. There's 
 # two timesteps for each day (one for daytime, one for nighttime), so Simulation.simulate(730) 
 # will simulate one year, and so forth.
-
 # To retrieve a person (i.e., the Python object in memory that represents them) by
 # their name, use the command Simulation.find_person(string_of_their_full_name), e.g.,
 # Simulation.find('James Ryan').
@@ -61,8 +61,6 @@ def outline_businesses():
     print '\nCurrent businesses in {town}:'.format(town=sim.town.name)
     for c in sim.town.companies:
         print '\t{}'.format(c)
-
-
 def outline_character_locations():
     """Outline the locations in town, and who is currently at each one."""
     for location in sim.town.companies|sim.town.dwelling_places:
@@ -75,20 +73,14 @@ def outline_character_locations():
                     print "\t{} (working as {})".format(character, character.routine.occasion, character.occupation.vocation)
                 else:
                     print "\t{} ({})".format(character, character.routine.occasion)
-
-
 def outline_gravestones():
     """Print out all the gravestones in the town."""
     for d in sim.town.deceased:
         print d.gravestone.description
-
-
 def outline_character_social_network(person):
     """Print out a character's relationships to everyone else in the town."""
     for resident in sim.town.residents:
         print person.relation_to_me(resident)
-
-
 def outline_relationship(person, other_person):
     """Outline the unidirectional relationships between these two."""
     if other_person not in person.relationships:
@@ -99,22 +91,18 @@ def outline_relationship(person, other_person):
         print '\n'
         print "\t{}'s relationship toward {}:".format(other_person, person)
         print other_person.relationships[person].outline()
-
 def list_attributes(entity):
 	"""Print out a list of attributes that an entity has.
-
 	This will specifically print out a list of attributes that the object passed for
 	the 'entity' argument has. You can then see what values are held in these attributes by
 	using simple dot-notation commands. For instance, if a person has the attribute 'neighbors',
 	you can see what's held in that attribute by using a command like 'print entity.neighbors'.
-
 	The listing of attributes won't give an exhuastive account of the kinds of data that are
 	stored for most entities, since some attributes will hold objects that themselves have
 	attributes. For example, 'person.face' will hold a Face object, which itself will have 
 	attributes holding objects pertaining to components of the face. Generally, though, the 
 	listing	produced by this function should give you a good idea of some of the kinds of data 
 	that are stored (some of which may be narratively potent).
-
 	Additionally, any attributes that are computed dynamically (by using Python @property
 	decorators) won't show up. Here's a current list of those kinds of attributes for Person
 	objects:
@@ -146,13 +134,9 @@ def list_attributes(entity):
 	"""
 	for attribute in sorted(vars(entity).keys()):  # Prints them out in alphabetical order
 		print attribute
-
-
 def outline_physical_description(person):
 	"""Outline a person's physical description."""
 	print person.description
-
-
 def outline_personality(person):
 	"""Outline a person's physical description."""
 	str = "\nFive-factor personality model of {}:\n\n".format(person.name)
@@ -182,10 +166,7 @@ def outline_personality(person):
 		' (takes after {})'.format(person.personality.n.inherited_from.name)
 	)
 	print str
-
-
-def outline_love_life(person):
-	"""Outline a person's love life, including their strongest love interest and anyone else they are
+	"""
 	very interested in romantically.
 	"""
 	spouse = person.spouse
@@ -214,8 +195,6 @@ def outline_love_life(person):
 	else:
 		str += "\tOther love interests: none\n"
 	print str
-
-
 def outline_family(person):
 	"""Outline a person's family members."""
 	str = "\nFamily of {}:\n".format(person.name)
@@ -234,16 +213,12 @@ def outline_family(person):
 	str += "\tNephews: {}\n".format(', '.join(x.name for x in person.nephews) if person.nephews else 'none')
 	str += "\tCousins: {}\n".format(', '.join(x.name for x in person.cousins) if person.cousins else 'none')
 	print str
-
-
 def list_ancestors(person):
 	"""List all of a person's ancestors."""
 	for ancestor in person.ancestors:
 			print ancestor
-
-
 def list_work_history(person):
 	"""List out a person's occupational history."""
 	for o in person.occupations:
 			print o
-        
+
