@@ -41,30 +41,54 @@ def rate_chars():
     for person in all_time_residents:
         rating = 0
         enemies = person.enemies
-        for enemy in enemies:
-            rating += 1
+        num_enemies = len(enemies)
+        rating += num_enemies
+        num_unrequited = 0
         for case in unrequited_love_cases:
             if person == case.nonreciprocator:
                 rating += 1
+                num_unrequited += 1
+        num_love_triangles = 0
         for triangle in love_triangles:
             if person in triangle.subjects:
                 rating += 3
+                num_love_triangles += 1
+        is_misanthrope = False;
         for misanthrope in misanthropes:
             if person == misanthrope.misanthrope:
+                is_misanthrope = True
                 rating += 10
+        num_rivalries = 0
         for rivalry in rivalries: 
             if person in rivalry.subjects:
+                num_rivalries += 1
                 rating += 1
+        is_rags_to_riches = False
         for case in rags_to_riches:
             if person in case.subjects:
-                rating += 15
+                is_rags_to_riches = True
+                rating += 30
+        is_riches_to_rags = False
         for case in riches_to_rags:
             if person in case.subjects:
-                rating += 15
-        character_interesting_rating[person] = rating
+                is_riches_to_rags = True
+                rating += 30
+        if rating > 10:
+          character_interesting_rating[person] = {}
+          character_interesting_rating[person]['rating'] = rating
+          character_interesting_rating[person]['num_enemies'] = num_enemies
+          character_interesting_rating[person]['num_love_triangles'] = num_love_triangles
+          character_interesting_rating[person]['num_unrequited'] = num_unrequited
+          character_interesting_rating[person]['is_rags_to_riches'] = is_rags_to_riches
+          character_interesting_rating[person]['is_riches_to_rags'] = is_riches_to_rags
+          character_interesting_rating[person]['num_rivalries'] = num_rivalries
+          character_interesting_rating[person]['is_misanthrope'] = is_misanthrope
     return character_interesting_rating
 
 character_interesting_rating = rate_chars()
-for person in character_interesting_rating:
-  if character_interesting_rating[person] > 0:
-    print person, ",", "rating:", character_interesting_rating[person]
+
+sorted_list = sorted(character_interesting_rating.items(), key=lambda x:x[1])
+
+for i in character_interesting_rating:
+  print(i.name)
+  print(str(character_interesting_rating[i]) + '\n')
