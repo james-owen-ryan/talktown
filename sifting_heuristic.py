@@ -23,27 +23,35 @@ def create_simulation():
 
 def dictionary_to_json(career_trajectory_dictionary):
   json_data = json.dumps(career_trajectory_dictionary)
-  output_file = open('sifting_heuristic/career_trajectory_dictionary.json', 'w')
+  output_file = open('sifting_heuristic/career_trajectory_dictionary_m.json', 'w')
   output_file.write(json_data)
   output_file.close()
 
 def create_career_trajectory_dictionary():
   #career_trajectory_dictionary = {}
-  json_file = open('sifting_heuristic/career_trajectory_dictionary.json', 'r')
-  career_trajectory_dictionary = json.loads(json_file.read())
-  print "\nThis is world " + str(i + 1)
+  #json_file = open('sifting_heuristic/career_trajectory_dictionary.json', 'r')
+  #career_trajectory_dictionary = json.loads(json_file.read())
+  career_trajectory_dictionary = {}
   town = create_simulation()
   all_time_residents = town.all_time_residents
   for resident in all_time_residents:
     occupations = []
+    occupations_levels = []
+    previous = "occupation"
     for occupation in resident.occupations:
+      if occupation.vocation == previous:
+        continue
       occupations.append(occupation.vocation)
+      previous = occupation.vocation
+      occupations_levels.append(occupation.level)
+    if 1 in occupations_levels:
+      continue
     occupations_tuple = tuple(occupations)
     if str(occupations_tuple) in career_trajectory_dictionary.keys():
       career_trajectory_dictionary[str(occupations_tuple)] += 1 
     else:
       career_trajectory_dictionary[str(occupations_tuple)] = 1  
-  json_file.close()
+  #json_file.close()
   dictionary_to_json(career_trajectory_dictionary)
   print(sorted(career_trajectory_dictionary.items(), key=lambda x:x[1]))
 
@@ -74,7 +82,8 @@ def calculate_trajectory_percentages():
   output_json_file.write(json_data)
   output_json_file.close()
 
-calculate_trajectory_percentages()
+#calculate_trajectory_percentages()
+create_career_trajectory_dictionary()
 
 
 
