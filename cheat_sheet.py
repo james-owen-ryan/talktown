@@ -1,104 +1,13 @@
-import sys
-import time
-from simulation import Simulation
-
-
-# Generate a town!
-start_time = time.time()
-sim = Simulation()  # Objects of the class Simulation are Talk of the Town simulations
-# Simulate from the date specified as the start of town generation to the date specified
-# as its terminus; both of these dates can be set in config/basic_config.py
-try:
-    sim.establish_setting()  # This is the worldgen procedure; it will simulate until the date specified in basic_config.py
-    town = sim.town
-except KeyboardInterrupt:  # Enter "ctrl+C" (a keyboard interrupt) to end worldgen early
-    # In the case of keyboard interrupt, we need to tie up a few loose ends
-    sys.stdout.write('\r{}'.format(' ' * 94))  # Clear out the last sampled event written to stdout
-    sys.stdout.write('\rWrapping up...')
-    sim.advance_time()
-    for person in list(sim.town.residents):
-        person.routine.enact()
-# Town generation was successful, so print out some basic info about the town
-print "\nAfter {time_elapsed}s, town generation was successful!".format(
-    time_elapsed=int(time.time()-start_time)
-)
-# Print out the town, population, and date
-print "\nIt is now the {date}, in the town of {town}, pop. {population}.\n".format(
-    date=sim.date[0].lower() + sim.date[1:],
-    town=sim.town.name,
-    population=sim.town.population
-)
-# Start excavating nuggets of dramatic intrigue from the raw emergent material produced
-# during the simulation of the town's history
-print "Excavating nuggets of dramatic intrigue..."
-sim.story_recognizer.excavate()
-# Save all this material to global variables, for convenience
-unrequited_love_cases = sim.story_recognizer.unrequited_love_cases
-love_triangles = sim.story_recognizer.love_triangles
-extramarital_romantic_interests = sim.story_recognizer.extramarital_romantic_interests
-asymmetric_friendships = sim.story_recognizer.asymmetric_friendships
-misanthropes = sim.story_recognizer.misanthropes
-sibling_rivalries = sim.story_recognizer.sibling_rivalries
-business_owner_rivalries = sim.story_recognizer.business_owner_rivalries
-
-# To simulate ahead in time, simply use the 'Simulation.simulate()' method (given
-# that we binded a Simulation object to the variable 'sim' above, you can call this
-# using sim.simulate()'), which takes the number of timesteps as its argument. There's 
-# two timesteps for each day (one for daytime, one for nighttime), so Simulation.simulate(730) 
-# will simulate one year, and so forth.
+# To simulate ahead in time, simply use the 'Simulation.simulate()' method, which 
+# takes the number of timesteps as its argument. There's two timesteps for each 
+# day, so Simulation.simulate(730) will simulate one year, and so forth.
 
 # To retrieve a person (i.e., the Python object in memory that represents them) by
 # their name, use the command Simulation.find_person(string_of_their_full_name), e.g.,
 # Simulation.find('James Ryan').
 
-# Here's some other quick commands that you can use to explore your generated town.
+# Besides that, here's some new functions that may be useful.
 
-def outline_businesses():
-    """Outline all the businesses, past and present, in this town."""
-    print '\nFormer businesses in {town}:'.format(town=sim.town.name)
-    for c in sim.town.former_companies:
-        print '\t{}'.format(c)
-    print '\nCurrent businesses in {town}:'.format(town=sim.town.name)
-    for c in sim.town.companies:
-        print '\t{}'.format(c)
-
-
-def outline_character_locations():
-    """Outline the locations in town, and who is currently at each one."""
-    for location in sim.town.companies|sim.town.dwelling_places:
-        print location
-        if not location.people_here_now:
-            print '\tno one here'
-        else:
-            for character in location.people_here_now:
-                if character.routine.working:
-                    print "\t{} (working as {})".format(character, character.routine.occasion, character.occupation.vocation)
-                else:
-                    print "\t{} ({})".format(character, character.routine.occasion)
-
-
-def outline_gravestones():
-    """Print out all the gravestones in the town."""
-    for d in sim.town.deceased:
-        print d.gravestone.description
-
-
-def outline_character_social_network(person):
-    """Print out a character's relationships to everyone else in the town."""
-    for resident in sim.town.residents:
-        print person.relation_to_me(resident)
-
-
-def outline_relationship(person, other_person):
-    """Outline the unidirectional relationships between these two."""
-    if other_person not in person.relationships:
-        print None
-    else:
-        print "\t{}'s relationship toward {}:".format(person, other_person)
-        print person.relationships[other_person].outline()
-        print '\n'
-        print "\t{}'s relationship toward {}:".format(other_person, person)
-        print other_person.relationships[person].outline()
 
 def list_attributes(entity):
 	"""Print out a list of attributes that an entity has.
@@ -246,4 +155,4 @@ def list_work_history(person):
 	"""List out a person's occupational history."""
 	for o in person.occupations:
 			print o
-        
+
