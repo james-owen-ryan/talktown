@@ -28,6 +28,7 @@ class Town(object):
         self.lots = set()
         self.tracts = set()
         self.dwelling_places = set()  # Both houses and apartment units (not complexes)
+        self.former_dwelling_places = set()
         self.streets = set()
         self.parcels = set()
         self.blocks = set()

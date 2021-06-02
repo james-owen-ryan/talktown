@@ -18,7 +18,7 @@ class Person(object):
 
     def __init__(self, sim, birth):
         """Initialize a Person object."""
-        # Set location and simplay instance
+        # Set location and sim instance
         self.sim = sim
         self.id = self.sim.current_person_id
         self.sim.current_person_id += 1
@@ -211,6 +211,10 @@ class Person(object):
             return "{}, left town in {}".format(self.name, self.departure.year)
         else:
             return "{}, {}-{}".format(self.name, self.birth_year, self.death_year)
+
+    def __repr__(self):
+        """Return string representation."""
+        return self.name
 
     @staticmethod
     def _init_fertility(male, config):

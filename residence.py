@@ -100,6 +100,7 @@ class Apartment(DwellingPlace):
     def __init__(self, apartment_complex, lot, unit_number):
         self.complex = apartment_complex
         self.unit_number = unit_number
+        self.construction = None
         super(Apartment, self).__init__(lot, owners=(apartment_complex.owner.person,))
         self.address = self._init_generate_address()
 

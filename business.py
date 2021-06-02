@@ -75,6 +75,8 @@ class Business(object):
             # Demolition attribute
             if demolition_preceding_construction_of_this_business:
                 demolition_preceding_construction_of_this_business.reason = self.construction
+        else:
+            self.construction = None
         # Set address
         self.address = self.lot.address
         self.house_number = self.lot.house_number

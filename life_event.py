@@ -84,7 +84,7 @@ class Birth(Event):
             self._have_mother_potentially_exit_workforce()
         if self.doctor:  # There won't be a doctor if the birth happened outside the town
             self.hospital = doctor.company
-            self.nurse = {
+            self.nurses = {
                 position for position in self.hospital.employees if
                 position.__class__.__name__ == 'Nurse'
             }
@@ -304,7 +304,7 @@ class BusinessConstruction(Event):
         if self.architect:
             self.construction_firm = architect.company
             self.builders = set([
-                position for position in self.construction_firm.employees if
+                position.person for position in self.construction_firm.employees if
                 position.__class__.__name__ == 'Builder'
             ])
             self.architect.building_constructions.add(self)
@@ -313,6 +313,7 @@ class BusinessConstruction(Event):
             self.construction_firm = None
             self.builders = {p for p in subject.nuclear_family if p.in_the_workforce}
         self.subject.building_commissions.add(self)
+        self.demolition_that_preceded_this = demolition_that_preceded_this
         if demolition_that_preceded_this:
             demolition_that_preceded_this.reason = self
 
@@ -453,11 +454,13 @@ class Demolition(Event):
         # If this is a dwelling place, have its now-displaced residents find new housing
         if building.__class__.__name__ is 'House':
             self.town.dwelling_places.remove(building)
+            self.town.former_dwelling_places.add(building)
             if building.residents:
                 self._have_the_now_displaced_residents_move(house_or_apartment_unit=building)
         if building.__class__.__name__ is 'ApartmentComplex':
             for unit in building.units:
                 self.town.dwelling_places.remove(unit)
+                self.town.former_dwelling_places.add(unit)
                 if unit.residents:
                     self._have_the_now_displaced_residents_move(house_or_apartment_unit=unit)
 
@@ -793,7 +796,7 @@ class HouseConstruction(Event):
         if self.architect:
             self.construction_firm = architect.company
             self.builders = set([
-                position for position in self.construction_firm.employees if
+                position.person for position in self.construction_firm.employees if
                 position.__class__.__name__ == 'Builder'
             ])
             self.architect.building_constructions.add(self)
@@ -802,6 +805,7 @@ class HouseConstruction(Event):
             self.builders = set()
         for subject in self.subjects:
             subject.building_commissions.add(self)
+        self.demolition_that_preceded_this = demolition_that_preceded_this
         if demolition_that_preceded_this:
             demolition_that_preceded_this.reason = self
 
@@ -1127,6 +1131,7 @@ class NameChange(Event):
         return "Name change by which {} became known as {} in {}".format(
             self.old_name, self.new_name, self.year
         )
+
 
 class Retirement(Event):
     """A retirement by which a person ceases some occupation."""
